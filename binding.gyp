@@ -1,0 +1,12 @@
+{
+    "targets":[
+        {
+            "target_name":"NodeQuant_Linux64",
+            "sources":["nodectpmd.cpp","nodectptd.cpp","nodequant.cpp"],
+            "libraries":[
+                "/usr/local/lib/libthostmduserapi.so",
+                "/usr/local/lib/libthosttraderapi.so"
+            ]
+        }
+    ]
+}
