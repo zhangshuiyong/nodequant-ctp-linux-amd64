@@ -114,6 +114,7 @@ public:
 	static napi_value subscribeMarketData(napi_env env, napi_callback_info info);
 	static napi_value unSubscribeMarketData(napi_env env, napi_callback_info info);
 	static napi_value logout(napi_env env, napi_callback_info info);
+	static napi_value getApiVersion(napi_env env, napi_callback_info info);
 	static napi_value getTradingDay(napi_env env, napi_callback_info info);
 	static string CHString_To_UTF8(char* str);
 };

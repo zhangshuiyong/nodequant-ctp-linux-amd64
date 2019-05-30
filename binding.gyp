@@ -4,8 +4,8 @@
             "target_name":"NodeQuant_Linux64",
             "sources":["nodectpmd.cpp","nodectptd.cpp","nodequant.cpp"],
             "libraries":[
-                "/usr/local/lib/libthostmduserapi.so",
-                "/usr/local/lib/libthosttraderapi.so"
+                "/usr/local/lib/thostmduserapi_se.so",
+                "/usr/local/lib/thosttraderapi_se.so"
             ]
         }
     ]

@@ -132,6 +132,7 @@ napi_status CTPTraderClient::Init(napi_env env)
 	napi_property_descriptor properties[] = {
 		DECLARE_NAPI_PROPERTY("on", on),
 		DECLARE_NAPI_PROPERTY("connect", connect),
+		DECLARE_NAPI_PROPERTY("getApiVersion", getApiVersion),
 		DECLARE_NAPI_PROPERTY("authenticate", authenticate),
 		DECLARE_NAPI_PROPERTY("login", login),
 		DECLARE_NAPI_PROPERTY("querySettlementInfo", querySettlementInfo),
@@ -370,17 +371,50 @@ napi_value CTPTraderClient::connect(napi_env env, napi_callback_info info)
 	return result;
 }
 
+napi_value CTPTraderClient::getApiVersion(napi_env env, napi_callback_info info)
+{
+	size_t argc = 0;
+	napi_value _this;
+	NAPI_CALL(env, napi_get_cb_info(env, info, &argc, nullptr, &_this, nullptr));
+
+	if (argc != 0) {
+		napi_value msg;
+		napi_create_string_utf8(env,
+			"Wrong number of arguments.Right Format: getApiVersion()",
+			NAPI_AUTO_LENGTH, &msg);
+		napi_value err;
+		napi_create_error(env, NULL, msg, &err);
+		napi_fatal_exception(env, err);
+		return NULL;
+	}
+
+	CTPTraderClient* traderClient;
+	NAPI_CALL(env, napi_unwrap(env, _this, reinterpret_cast<void**>(&traderClient)));
+
+	if (traderClient->Api) {
+
+		napi_value result;
+		string apiVersion = traderClient->Api->GetApiVersion();
+		NAPI_CALL(env, napi_create_string_utf8(env, apiVersion.c_str(), apiVersion.length(), &result));
+
+		return result;
+	}
+	else {
+		return NULL;
+	}
+}
+
 napi_value CTPTraderClient::authenticate(napi_env env, napi_callback_info info)
 {
-	size_t argc = 4;
-	napi_value args[4];
+	size_t argc = 5;
+	napi_value args[5];
 	napi_value _this;
 	NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, &_this, nullptr));
 
-	if (argc != 4) {
+	if (argc != 5) {
 		napi_value msg;
 		napi_create_string_utf8(env,
-			"Wrong number of arguments.Right Format:authenticate(String:userID, String::brokerID, String:authCode,String:userProductInfo)",
+			"Wrong number of arguments.Right Format:authenticate(String:userID, String::brokerID, String:AppID,String:AuthCode,String:userProductInfo)",
 			NAPI_AUTO_LENGTH, &msg);
 		napi_value err;
 		napi_create_error(env, NULL, msg, &err);
@@ -394,19 +428,23 @@ napi_value CTPTraderClient::authenticate(napi_env env, napi_callback_info info)
 	napi_valuetype brokerIDType;
 	NAPI_CALL(env, napi_typeof(env, args[1], &brokerIDType));
 
-	napi_valuetype authCodeType;
-	NAPI_CALL(env, napi_typeof(env, args[2], &authCodeType));
+	napi_valuetype AppIDType;
+	NAPI_CALL(env, napi_typeof(env, args[2], &AppIDType));
+
+	napi_valuetype AuthCodeType;
+	NAPI_CALL(env, napi_typeof(env, args[3], &AuthCodeType));
 
 	napi_valuetype userProductInfoType;
-	NAPI_CALL(env, napi_typeof(env, args[3], &userProductInfoType));
+	NAPI_CALL(env, napi_typeof(env, args[4], &userProductInfoType));
 
 	if (userIDType != napi_string ||
 		brokerIDType != napi_string ||
-		authCodeType != napi_string ||
+		AppIDType != napi_string ||
+		AuthCodeType != napi_string ||
 		userProductInfoType != napi_string) {
 		napi_value msg;
 		napi_create_string_utf8(env,
-			"Parameter Type Error,Right Format:authenticate(String:userID, String::brokerID, String:authCode,String:userProductInfo)",
+			"Parameter Type Error,Right Format:authenticate(String:userID, String::brokerID, String:AppID,String:AuthCode,String:userProductInfo)",
 			NAPI_AUTO_LENGTH, &msg);
 		napi_value err;
 		napi_create_error(env, NULL, msg, &err);
@@ -428,16 +466,21 @@ napi_value CTPTraderClient::authenticate(napi_env env, napi_callback_info info)
 	buffer_size = 11;
 	NAPI_CALL(env,
 		napi_get_value_string_utf8(env, args[1], req.BrokerID, buffer_size, &copied));
+    
+	//AppID 33×Ö·û
+	buffer_size = 33;
+	NAPI_CALL(env,
+		napi_get_value_string_utf8(env, args[2], req.AppID, buffer_size, &copied));
 
 	//AuthCode 17×Ö·û
 	buffer_size = 17;
 	NAPI_CALL(env,
-		napi_get_value_string_utf8(env, args[2], req.AuthCode, buffer_size, &copied));
+		napi_get_value_string_utf8(env, args[3], req.AuthCode, buffer_size, &copied));
 
 	//UserProductInfo 11×Ö·û
 	buffer_size = 11;
 	NAPI_CALL(env,
-		napi_get_value_string_utf8(env, args[3], req.UserProductInfo, buffer_size, &copied));
+		napi_get_value_string_utf8(env, args[4], req.UserProductInfo, buffer_size, &copied));
 
 	CTPTraderClient* traderClient;
 	NAPI_CALL(env, napi_unwrap(env, _this, reinterpret_cast<void**>(&traderClient)));
@@ -3700,7 +3743,7 @@ void CTPTraderClient::pkg_cb_errrtnorderinsert(OnEventCbRtnField* data, napi_val
 		//TThostFtdcPriceType	StopPrice;
 		//typedef double TThostFtdcPriceType;
 		napi_value StopPrice;
-		NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, pInputOrder->StopPrice, &LimitPrice));
+		NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, pInputOrder->StopPrice, &StopPrice));
 
 		NAPI_CALL_RETURN_VOID(env_, napi_set_named_property(env_, *cbArgs, "StopPrice", StopPrice));
 

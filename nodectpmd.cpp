@@ -146,7 +146,8 @@ napi_status CTPMarketDataClient::Init(napi_env env)
 		DECLARE_NAPI_PROPERTY("subscribeMarketData", subscribeMarketData),
 		DECLARE_NAPI_PROPERTY("unSubscribeMarketData", unSubscribeMarketData),
 		DECLARE_NAPI_PROPERTY("logout", logout),
-		DECLARE_NAPI_PROPERTY("getTradingDay", getTradingDay)
+		DECLARE_NAPI_PROPERTY("getTradingDay", getTradingDay),
+	    DECLARE_NAPI_PROPERTY("getApiVersion", getApiVersion)
 	};
 
 	//创建Js对象prototype
@@ -355,6 +356,40 @@ napi_value CTPMarketDataClient::connect(napi_env env, napi_callback_info info)
 	NAPI_CALL(env, napi_create_int32(env, nResult, &result));
 
 	return result;
+}
+
+napi_value CTPMarketDataClient::getApiVersion(napi_env env, napi_callback_info info)
+{
+	size_t argc = 0;
+	napi_value _this;
+	NAPI_CALL(env, napi_get_cb_info(env, info, &argc, nullptr, &_this, nullptr));
+
+	if (argc != 0) {
+		napi_value msg;
+		napi_create_string_utf8(env,
+			"Wrong number of arguments.Right Format: getApiVersion()",
+			NAPI_AUTO_LENGTH, &msg);
+		napi_value err;
+		napi_create_error(env, NULL, msg, &err);
+		napi_fatal_exception(env, err);
+		return NULL;
+	}
+
+	CTPMarketDataClient* marketDataClient;
+	NAPI_CALL(env, napi_unwrap(env, _this, reinterpret_cast<void**>(&marketDataClient)));
+
+
+	if (marketDataClient->Api) {
+
+		napi_value result;
+		string apiVersion = marketDataClient->Api->GetApiVersion();
+		NAPI_CALL(env, napi_create_string_utf8(env, apiVersion.c_str(), apiVersion.length(), &result));
+
+		return result;
+	}
+	else {
+		return NULL;
+	}
 }
 
 napi_value CTPMarketDataClient::getTradingDay(napi_env env, napi_callback_info info)

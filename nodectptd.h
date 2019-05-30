@@ -159,6 +159,7 @@ public:
 	//td ±©Â¶½Ó¿Úapi
 	static napi_value on(napi_env env, napi_callback_info info);
 	static napi_value connect(napi_env env, napi_callback_info info);
+	static napi_value getApiVersion(napi_env env, napi_callback_info info);
 	static napi_value authenticate(napi_env env, napi_callback_info info);
 	static napi_value login(napi_env env, napi_callback_info info);
 	static napi_value querySettlementInfo(napi_env env, napi_callback_info info);
