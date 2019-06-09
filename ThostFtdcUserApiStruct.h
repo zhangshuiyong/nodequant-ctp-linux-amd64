@@ -810,8 +810,6 @@ struct CThostFtdcInvestorPositionField
 	TThostFtdcVolumeType	YdStrikeFrozen;
 	///投资单元代码
 	TThostFtdcInvestUnitIDType	InvestUnitID;
-	///大商所持仓成本差值，只有大商所使用
-	TThostFtdcMoneyType	PositionCostOffset;
 };
 
 ///合约保证金率
@@ -2271,8 +2269,6 @@ struct CThostFtdcSyncingInvestorPositionField
 	TThostFtdcVolumeType	YdStrikeFrozen;
 	///投资单元代码
 	TThostFtdcInvestUnitIDType	InvestUnitID;
-	///大商所持仓成本差值，只有大商所使用
-	TThostFtdcMoneyType	PositionCostOffset;
 };
 
 ///正在同步中的合约保证金率
@@ -5405,8 +5401,6 @@ struct CThostFtdcInvestorPositionDetailField
 	TThostFtdcVolumeType	CloseVolume;
 	///平仓金额
 	TThostFtdcMoneyType	CloseAmount;
-	///按照时间顺序平仓的笔数,大商所专用
-	TThostFtdcVolumeType	TimeFirstVolume;
 	///投资单元代码
 	TThostFtdcInvestUnitIDType	InvestUnitID;
 };
@@ -6833,32 +6827,6 @@ struct CThostFtdcQryBulletinField
 	TThostFtdcNewsTypeType	NewsType;
 	///紧急程度
 	TThostFtdcNewsUrgencyType	NewsUrgency;
-};
-
-///MulticastInstrument
-struct CThostFtdcMulticastInstrumentField
-{
-	///主题号
-	TThostFtdcInstallIDType	TopicID;
-	///合约代码
-	TThostFtdcInstrumentIDType	InstrumentID;
-	///合约编号
-	TThostFtdcInstallIDType	InstrumentNo;
-	///基准价
-	TThostFtdcPriceType	CodePrice;
-	///合约数量乘数
-	TThostFtdcVolumeMultipleType	VolumeMultiple;
-	///最小变动价位
-	TThostFtdcPriceType	PriceTick;
-};
-
-///QryMulticastInstrument
-struct CThostFtdcQryMulticastInstrumentField
-{
-	///主题号
-	TThostFtdcInstallIDType	TopicID;
-	///合约代码
-	TThostFtdcInstrumentIDType	InstrumentID;
 };
 
 ///转帐开户请求
